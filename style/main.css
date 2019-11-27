@@ -1,0 +1,146 @@
+body,
+html {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+html body {
+  background-color: #DDDDEE;
+}
+p {
+  font: 14pt Roboto, Sans-Serif;
+}
+span.code {
+  padding: 0 5px;
+  background-color: #EEEEEE;
+  font-family: monospace;
+}
+*[data-toggle="popover"] {
+  cursor: pointer;
+}
+.wrapper {
+  margin: 0 100px;
+  background-color: #FFFFFF;
+}
+.wrapper-padding {
+  padding: 20px 50px;
+}
+.header {
+  border-bottom: solid 2px #99DD99;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: end;
+}
+.logo {
+  display: inline-block;
+}
+.menu {
+  margin-bottom: 20px;
+}
+.menu .btn-sm {
+  background-color: #99DD99;
+  border-color: #99DD99;
+  font: 12pt Roboto, Sans-Serif;
+}
+.menu .dropdown-toggle:after {
+  display: inline-block;
+  border: solid 5px transparent;
+  border-top-color: #000000;
+  margin-left: 5px;
+  content: "";
+  clear: both;
+  vertical-align: bottom;
+}
+.dropdown-menu {
+  padding: 10px;
+}
+.dropdown-menu a {
+  display: block;
+  font: bold 12pt Roboto, Sans-Serif;
+  color: #77AA77;
+  text-decoration: none;
+  padding: 5px;
+  white-space: nowrap;
+}
+.dropdown-menu a:hover {
+  background-color: #77AA77;
+  color: #FFFFFF;
+}
+.spring-logo {
+  height: 100px;
+}
+.content {
+  margin-top: 20px;
+}
+.explorer {
+  display: grid;
+  grid-template-columns: min-content auto;
+}
+.dir-tree {
+  font: 12pt Helvetica, Sans-Serif;
+  display: inline-block;
+  vertical-align: top;
+}
+.dir-tree > ul {
+  border: solid 2px #CCCCCC;
+  margin: 0;
+  padding: 10px;
+  display: inline-block;
+}
+.dir-tree ul {
+  list-style: none;
+  padding-left: 20px;
+}
+.dir-tree ul li {
+  margin-bottom: 5px;
+  white-space: nowrap;
+}
+.dir-tree ul li:before {
+  content: " ";
+  display: inline-block;
+  vertical-align: middle;
+  clear: none;
+  width: 16px;
+  height: 16px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  margin-right: 5px;
+}
+.dir-tree ul li.dir:before {
+  background-image: url("../images/tree-dir-blk_sm.png");
+}
+.dir-tree ul li.file {
+  cursor: pointer;
+}
+.dir-tree ul li.file:before {
+  background-image: url("../images/tree-file_sm.png");
+}
+.dir-tree ul li.file.sb:before {
+  background-image: url("../images/tree-file-sb_sm.png");
+}
+.display {
+  vertical-align: top;
+  margin-left: 20px;
+}
+.display pre {
+  margin: 0;
+}
+.file-code {
+  display: none;
+  background-color: #F0F0F0;
+}
+.file-code pre {
+  background-color: #F0F0F0;
+}
+.delta-add {
+  background-color: #CCFFCC;
+}
+.delta-remove {
+  background-color: #FFCCCC;
+}
+.inline {
+  display: inline-block;
+}
+.popover-title {
+  white-space: nowrap;
+}

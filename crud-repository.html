@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+
+<body>
+  <div class="intro">
+    <p>To actually connect to a database, we add in the required dependencies and create a few more classes.</p>
+    <p>The Entity is the contract with the database, defining how your model should look to correctly interact with the peristent storage.</p>
+    <p>The Repository is the way to interface with the persistent storage. The repository is a simple interface and requires no implementation, SpringBoot will automatically create an implementation for us at runtime.</p>
+    <p>The Service is where all of our business logic takes place, requesting data from the persistent storage, transforming it, and returning it back to the controller. All business logic takes place in this layer.</p>
+  </div>
+  <div class="explorer">
+    <div class="dir-tree">
+      <ul>
+        <li class="dir">
+          <span>demo</span>
+          <ul>
+            <li class="dir"><span>.mvn</span></li>
+            <li class="dir">
+              <span>src</span>
+              <ul>
+                <li class="dir"><span>main</span>
+                  <ul>
+                    <li class="dir">
+                      <span>java</span>
+                      <ul>
+                        <li class="dir">
+                          <span>com.example.demo</span>
+                          <ul>
+                            <li class="dir">
+                              <span>data</span>
+                              <ul>
+                                <li class="dir">
+                                  <span>entity</span>
+                                  <ul>
+                                    <li class="delta-add file">UserEntity.java</li>
+                                  </ul>
+                                </li>
+                                <li class="dir">
+                                  <span>repository</span>
+                                  <ul>
+                                    <li class="delta-add file">UserRepository.java</li>
+                                  </ul>
+                                </li>
+                              </ul>
+                            </li>
+                            <li class="dir">
+                              <span>domain</span>
+                              <ul>
+                                <li class="file">User.java</li>
+                              </ul>
+                            </li>
+                            <li class="dir">
+                              <span>service</span>
+                              <ul>
+                                <li class="delta-add file">UserService.java</li>
+                              </ul>
+                            </li>
+                            <li class="dir">
+                              <span>web</span>
+                              <ul>
+                                <li class="file">UserController.java</li>
+                              </ul>
+                            </li>
+                            <li class="file">DemoApplication.java</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li class="dir">
+                      <span>resources</span>
+                      <ul>
+                        <li class="delta-add file sb">application.yml</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="file">.gitignore</li>
+            <li class="file">mvnw</li>
+            <li class="file">mvnw.cmd</li>
+            <li class="delta-add file">pom.xml</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="display">
+      <div class="file-code" id="user-entity.java">
+        <pre>
+          <code class="java">package com.example.demo.data.entity;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
+<span class="delta-add" data-toggle="popover" title="Entity annotation" data-content="Tags the class as a persistence entity.  The specified name will be used as the table name.">@Entity(name = "User")</span>
+public class UserEntity {
+
+    <span class="inline delta-add" data-toggle="popover" title="Id annotation" data-content="Specifies which property is the primary key, this annotation is required.">@Id</span>
+    <span class="inline delta-add" data-toggle="popover" title="GeneratedValue annotation" data-content="Sets the ID generation strategy, in this case it will do auto-increment.">@GeneratedValue(strategy = GenerationType.IDENTITY)</span>
+    private Long id;
+    <span class="inline delta-add" data-toggle="popover" title="Column annotation" data-content="These properties equate to schema configurations in the DB.  You can specify a column name here, or choose not to and it will just derive the column name from the property name.">@Column(nullable = false, updatable = false)</span>
+    private String username;
+    @Column(nullable = false)
+    private String password;
+    @Column(nullable = false, updatable = false)
+    <span class="inline delta-add" data-toggle="popover" title="Date format" data-content="A good convention is to keep all dates in EPOCH milliseconds (Long) to avoid timezone and format discrepencies.">private Long joinDate;</span>
+
+    <div class="inline delta-add" data-toggle="popover" title="PrePersist annotation" data-content="Specifies additional logic that will automatically execute just before persisting the entity.  In this case, it is setting the join date to the current time just before the entity is created in persistent storage.">
+    @PrePersist
+    private void prePersistLogic() {
+        joinDate = System.currentTimeMillis();
+    }</div>
+
+    <div class="inline delta-add" data-toggle="popover" title="PreUpdate annotation" data-content="Specifies additional logic that will automatically execute just before updating the entity in persistent storage. This could be used to update an 'updatedOn' column.">
+    @PreUpdate
+    private void preUpdateLogic() {
+        // Do something.
+    }</div>
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    //Getters and setters...
+    //Equals and Hash...
+
+}
+          </code>
+        </pre>
+      </div>
+      <div class="file-code" id="user-repository.java">
+        <pre>
+          <code class="java">
+package com.example.demo.data.repository;
+
+import com.example.demo.data.entity.UserEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+<span class="inline delta-add" data-toggle="popover" title="Repository annotation" data-content="At runtime, SpringBoot will discover the interface and implement it with dynamically created queries based on Spring's Repo method naming convention.">@Repository</span>
+public <span class="inline delta-add" data-toggle="popover" title="Repository Interface" data-content="All repositories are a simple interface contract. You do not need to explicitly implement the interface.">interface</span> UserRepository extends <span class="inline delta-add" data-toggle="popover" title="JpaRepository" data-content="Extending the JpaRepository interface gives access to several stock search methods and features">JpaRepository</span>&lt;<span class="delta-add" data-toggle="popover" title="Entity Type" data-content="The Entity class associated with the repository">UserEntity</span>, <span class="delta-add" data-toggle="popover" title="ID Type" data-content="The associated Entity's id property type.">Long</span>&gt; {
+
+    <span class="inline delta-add" data-toggle="popover" title="New Query Methods" data-content="Adding a query feature is as simple as adding a new interface signature.  This one defines a new existsById() method that will allow you to check if a given id exists in the database.  No implementation of this method is required, Spring will automatically create an implementation for it at runtime.">boolean existsById(Long id);</span>
+
+}
+          </code>
+        </pre>
+      </div>
+      <div class="file-code" id="user-service.java">
+        <pre>
+          <code class="java">package com.example.demo.service;
+
+import com.example.demo.domain.User;
+import com.example.demo.data.entity.UserEntity;
+import com.example.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Handles the business logic for the various resource
+ * operations provided by the API contract endpoints.
+ */
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    <span class="inline delta-add" data-toggle="popover" title="ObjectMapper" data-content="Third party library (included via spring dependencies) for doing object transformations (i.e. copying properties of one class to another similar class)">private final ObjectMapper objectMapper;</span>
+
+    <span class="inline delta-add" data-toggle="popover" title="Autowired" data-content="Spring will insert the @Repository UserRepository that it found during it's initial startup scan.">@Autowired</span>
+    UserService(
+            UserRepository userRepository
+    ) {
+      this.userRepository = userRepository;
+      <span class="inline delta-add" data-toggle="popover" title="ObjectMapper Instance" data-content="For efficiency, only one instance of the mapper should be used.  Later this should be moved to a utility class so it can be a single instance accross the entire project.">objectMapper = new ObjectMapper();</span>
+    }
+
+    public User getUserById(Long id) {
+        <span class="inline delta-add" data-toggle="popover" title="Get by ID" data-content="Default implementation provided by JpaRepository interface.">Optional&lt;UserEntity&gt; userEntity = userRepository.findById(id);</span>
+
+        <div class="inline delta-add" data-toggle="popover" title="Resource Not Found" data-content="Optional.isPresent() is the method to see if data was found from the previous query.  If no resource was found, a 404 should make it's way back to the user, as this is similar to a page not found issue.  An Implementation for this could be to throw an exception and catch it in a generic exception handler that provides user friendly responses to the request.">
+        if (!userEntity.isPresent()) {
+            //If a resource is not found by ID, that is the same as a 404 response,
+            //so we need to send that back to the user.
+        }</div>
+
+        return <span class="inline delta-add" data-toggle="popover" title="Model Transformation" data-content="Converts a single object to type User.class">objectMapper.convertValue(UserEntity, User.class);</span>
+    }
+
+    public List&lt;User&gt; findAllUsers() {
+      List&lt;UserEntity&gt; userEntities = userRepository.findAll();
+
+      return <span class="inline delta-add" data-toggle="popover" title="Model List Transformation" data-content="Converts a list of objects to a list of User.class types.">objectMapper.convertValue(userEntities, new TypeReference&lt;List&lt;User&gt;&gt;(){});</span>
+    }
+
+    public List&lt;User&gt; createUsers(List&lt;User&gt; users) {
+      //validate user properties on business model.
+      //.....
+
+      List&lt;UserEntity&gt; userEntities = objectMapper.convertValue(users, UserEntity.class);
+
+      List&lt;UserEntity&gt; savedEntities = <span class="inline delta-add" data-toggle="popover" title="Method: saveAll()" data-content="Saves all given entities to the persistent storage, returning a list of the entities saved, including any newly populated fields (id, PrePersist data, etc).">userRepository.saveAll(userEntities)</span>;
+
+      return objectMapper.convertValue(savedEntities, User.class);
+    }
+
+    public List&lt;User&gt; updateUsers(List&lt;User&gt; users) {
+      //validate user properties on business model.
+      //.....
+
+      List&lt;UserEntity&gt; userEntities = objectMapper.convertValue(users, UserEntity.class);
+
+      List&lt;UserEntity&gt; savedEntities = <span class="inline delta-add" data-toggle="popover" title="Method: saveAll()" data-content="saveAll() is used for both create and update, hibernate doesn't care, it only checks if an ID is specified, and if that ID already exists it updates the record, if not, it creates a new one.">userRepository.saveAll(userEntities)</span>;
+
+      return objectMapper.convertValue(savedEntities, User.class);
+    }
+
+    public List&lt;User&gt; deleteUsers(List&lt;User&gt; users) {
+      //validate user properties on business model.
+      //.....
+
+      List&lt;UserEntity&gt; userEntities = objectMapper.convertValue(users, UserEntity.class);
+
+      <span class="inline delta-add" data-toggle="popover" title="Method: deleteAll()" data-content="Deletes all matching records from the persistent storage.  deleteAll() is a void method.">userRepository.deleteAll(userEntities);</span>
+
+      return <span class="inline delta-add" data-toggle="popover" title="CRUD: Delete" data-content="Implementation preference, no return value from deleteAll(), so what do you return.">Collections.emptyList();</span>
+    }
+}
+          </code>
+        </pre>
+      </div>
+      <div class="file-code" id="application.yml">
+        <pre>
+          <code class="yaml">
+spring:
+  profiles:
+    active: dev
+<div class="inline delta-add" data-toggle="popover" title="Properties: spring.database" data-content="Specifies the connection info for the database, in this case we're using default h2 credentials.">  datasource:
+    url: jdbc:h2:mem:CODESUPPORT
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver</div>
+
+<div class="inline delta-add" data-toggle="popover" title="Property: spring.jpa.database-platform" data-content="Specifies the dialect hibernate should use to talk to the database. Hibernate allows you to define models and queries that are database independent, and then these dialects will translate to the database specific queries needed.">  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect</div>
+
+<div class="inline delta-add" data-toggle="popover" title="Property: spring.h2.console.enabled" data-content="Activates the web console for accessing the H2 datbase. i.e. localhost:8080/h2-console">  h2:
+    console:
+      enabled: true</div>
+server:
+  port: 8080
+          </code>
+        </pre>
+      </div>
+      <div class="file-code" id="pom.xml">
+        <pre>
+          <code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;parent&gt;
+		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+		&lt;version&gt;2.2.1.RELEASE&lt;/version&gt;
+		&lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+	&lt;/parent&gt;
+	&lt;groupId&gt;com.example&lt;/groupId&gt;
+	&lt;artifactId&gt;demo&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;name&gt;demo&lt;/name&gt;
+	&lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
+
+	&lt;properties&gt;
+		&lt;java.version&gt;1.8&lt;/java.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+  <div class="inline delta-add" data-toggle="popover" title="SpringBoot Starter JPA" data-content="A group of dependencies for creating a SpringBoot application that connects to a Relational Database.">
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+		&lt;/dependency&gt;
+  </div>
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+		&lt;/dependency&gt;
+  <div class="inline delta-add" data-toggle="popover" title="H2 In-memory Database" data-content="An in-memory Relational Database used for local development and unit testing.">
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
+			&lt;artifactId&gt;h2&lt;/artifactId&gt;
+			&lt;scope&gt;runtime&lt;/scope&gt;
+		&lt;/dependency&gt;
+  </div>
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+			&lt;exclusions&gt;
+				&lt;exclusion&gt;
+					&lt;groupId&gt;org.junit.vintage&lt;/groupId&gt;
+					&lt;artifactId&gt;junit-vintage-engine&lt;/artifactId&gt;
+				&lt;/exclusion&gt;
+			&lt;/exclusions&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+				&lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+
+&lt;/project&gt;
+          </code>
+        </pre>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

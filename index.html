@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style/main.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+
+<body>
+  <div class="intro">
+    <p>The default file required for a SpringBoot application is only the main application class with the <span class="code">main()</span> method.</p>
+    <p>This will start the application, kicking off a sequence of reflection and configuration operations. SpringBoot is simply a DI (Dependency Injection) engine which performs certain processes based on the dependencies it discovers.</p>
+    <p>For instance, if it finds the spring-boot-start-web dependency on it's classpath, it will look for any web controllers and automatically start up an http servlet serving requests on the endpoints found in the controllers. If SpringBoot
+      sees the h2 dependency in it's classpath, it will automatically setup and configure an in-memory h2 database to be used with SQL queries.</p>
+  </div>
+  <div class="explorer">
+    <div class="dir-tree">
+      <ul>
+        <li class="dir">
+          <span>demo</span>
+          <ul>
+            <li class="dir"><span>.mvn</span></li>
+            <li class="dir">
+              <span>src</span>
+              <ul>
+                <li class="dir"><span>main</span>
+                  <ul>
+                    <li class="dir">
+                      <span>java</span>
+                      <ul>
+                        <li class="dir">
+                          <span>com.example.demo</span>
+                          <ul>
+                            <li class="delta-add file">DemoApplication.java</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li class="dir">
+                      <span>resources</span>
+                      <ul>
+                        <li class="delta-add file sb">application.yml</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="delta-add file">.gitignore</li>
+            <li class="delta-add file"><span data-toggle="popover" title="Maven Wrapper (Unix)" data-content="Generated shell script for executing maven commands.  This saves the trouble of having to install maven.">mvnw</span></li>
+            <li class="delta-add file"><span data-toggle="popover" title="Maven Wrapper (Windows)" data-content="Generated batch script for executing maven commands.  This saves the trouble of having to install maven.">mvnw.cmd</span></li>
+            <li class="delta-add file">pom.xml</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="display">
+      <div class="file-code" id="demo-application.java">
+        <pre>
+              <code class="java">package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span class="delta-add" data-toggle="popover" title="SpringBootApplication Annotation" data-content="Stock SpringBoot annotation to configure Spring, and is actually a wrapper for 3 sub-annotations.">@SpringBootApplication</span>
+public class DemoApplication {
+
+	public static void main(String[] args) {
+		<span class="delta-add"  data-toggle="popover" title="Run SpringApplication" data-content="Starts the SpringBoot application. This is the only direct initialization in the project, every other class is simply a component Spring can discover and utilize.">SpringApplication.run(DemoApplication.class, args);</span>
+	}
+
+}</code>
+            </pre>
+      </div>
+      <div class="file-code" id="application.yml">
+        <pre>
+                <code class="yaml">
+<div class="inline delta-add" data-toggle="popover" title="Property: spring.profiles.active" data-content="Sets the active spring profile.  This will automatically pull in additional configurations from application-<profile>.yml, or in this case, application-dev.yml">
+spring:
+  profiles:
+    active: dev
+  </div>
+</code>
+              </pre>
+      </div>
+      <div class="file-code" id=".gitignore">
+        <pre>
+                <code class="yaml"># Simple list of files that should not be committed to git.
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.iml
+*.launch
+.settings/
+*.sublime-workspace
+build/
+out/
+
+#Maven
+dependency-reduced-pom.xml
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# System Files
+.DS_Store
+Thumbs.db
+</code>
+              </pre>
+      </div>
+      <div class="file-code" id="pom.xml">
+        <pre>
+                <code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;parent&gt;
+		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+		&lt;version&gt;2.2.1.RELEASE&lt;/version&gt;
+		&lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+	&lt;/parent&gt;
+	&lt;groupId&gt;com.example&lt;/groupId&gt;
+	&lt;artifactId&gt;demo&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;name&gt;demo&lt;/name&gt;
+	&lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
+
+	&lt;properties&gt;
+		&lt;java.version&gt;1.8&lt;/java.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+  <div class="inline delta-add" data-toggle="popover" title="SpringBoot Starter" data-content="A group of dependencies for creating a SpringBoot application with basic functionality.">
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;
+		&lt;/dependency&gt;
+  </div>
+  <div class="inline delta-add" data-toggle="popover" title="SpringBoot Starter Test" data-content="A group of dependencies for creating SpringBoot application based unit tests.  (Only used in special cases)">
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+			&lt;exclusions&gt;
+				&lt;exclusion&gt;
+					&lt;groupId&gt;org.junit.vintage&lt;/groupId&gt;
+					&lt;artifactId&gt;junit-vintage-engine&lt;/artifactId&gt;
+				&lt;/exclusion&gt;
+			&lt;/exclusions&gt;
+		&lt;/dependency&gt;
+  </div>
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+    <div class="inline delta-add" data-toggle="popover" title="SpringBoot Maven Plugin" data-content="Maven plugin that adds features to the build process.">
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+				&lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+			&lt;/plugin&gt;
+    </div>
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+
+&lt;/project&gt;</code>
+              </pre>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

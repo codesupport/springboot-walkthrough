@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+
+<body>
+  <div class="intro">
+    <p>To make the endpoints consumable, we need to add some logic.</p>
+    <p>Controllers are simply API contracts, enforced with parameter validations, NO other logic should be done in them.</p>
+    <p>Instead all logic is done in the service class layer.</p>
+  </div>
+  <div class="explorer">
+    <div class="dir-tree">
+      <ul>
+        <li class="dir">
+          <span>demo</span>
+          <ul>
+            <li class="dir"><span>.mvn</span></li>
+            <li class="dir">
+              <span>src</span>
+              <ul>
+                <li class="dir"><span>main</span>
+                  <ul>
+                    <li class="dir">
+                      <span>java</span>
+                      <ul>
+                        <li class="dir">
+                          <span>com.example.demo</span>
+                          <ul>
+                            <li class="dir">
+                              <span>domain</span>
+                              <ul>
+                                <li class="file">User.java</li>
+                              </ul>
+                            </li>
+                            <li class="dir">
+                              <span>service</span>
+                              <ul>
+                                <li class="delta-add file">UserService.java</li>
+                              </ul>
+                            </li>
+                            <li class="dir">
+                              <span>web</span>
+                              <ul>
+                                <li class="delta-add file">UserController.java</li>
+                              </ul>
+                            </li>
+                            <li class="file">DemoApplication.java</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li class="dir">
+                      <span>resources</span>
+                      <ul>
+                        <li class="file sb">application.yml</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="file">.gitignore</li>
+            <li class="file">mvnw</li>
+            <li class="file">mvnw.cmd</li>
+            <li class="file">pom.xml</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="display">
+      <div class="file-code" id="user-service.java">
+        <pre>
+                  <code class="java">package com.example.demo.service;
+
+import com.example.demo.domain.User;
+import com.example.demo.data.entity.UserEntity;
+import com.example.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Handles the business logic for the various resource
+ * operations provided by the API contract endpoints.
+ */
+<span class="inline delta-add" data-toggle="popover" title="@Service annotation" data-content="Extends the @Component annotation allowing spring to locate this service during the intitial startup scan, saving it internally to be used in additional @Autowire situations.">@Service</span>
+public class UserService {
+
+    UserService() {
+
+    }
+
+    public User getUserById(Long id) {
+        return //Return info for one user;
+    }
+
+    public List&lt;User&gt; findAllUsers() {
+        return //Return info for all users
+    }
+
+    public List&lt;User&gt; createUsers(List&lt;User&gt; users) {
+      return //Return info for created users
+    }
+
+    public List&lt;User&gt; updateUsers(List&lt;User&gt; users) {
+      return //Return info for updated users
+    }
+
+    public List&lt;User&gt; deleteUsers(List&lt;User&gt; users) {
+      return //Return info for deleted users
+    }
+}
+  </code>
+                </pre>
+      </div>
+      <div class="file-code" id="user-controller.java">
+        <pre>
+                  <code class="java">package com.example.demo.controller;
+
+import com.example.demo.domain.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+ * Defines endpoints and validations for the associated API Contract for the {@link User} resource.
+ */
+@RestController
+@RequestMapping("/api/v1")
+public interface UserController {
+
+        private final UserService service;
+
+        <span class="inline delta-add" data-toggle="popover" title="@Autowired annotation" data-content="Spring will check previously discovered components for a matching type, and inject it here if one is found.  In this case it finds our UserService annotated with @Service and injects it.">@Autowired</span>
+        public UserControllerImpl(UserService userService) {
+            service = userService;
+        }
+
+        public List&lt;User&gt; getAllUsers() {
+            return service.findAllUsers();
+        }
+
+        public User getUserById(Long id) {
+            return service.getUserById(id);
+        }
+
+        public List&lt;User&gt; createUsers(List&lt;User&gt; users) {
+            return service.createUsers(users);
+        }
+
+        public List&lt;User&gt; updateUsers(List&lt;User&gt; users) {
+            return service.updateUsers(users);
+        }
+
+        public List&lt;User&gt; deleteUsers(List&lt;User&gt; users) {
+            return service.deleteUsers(users);
+        }
+}
+
+  </code>
+                </pre>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+
+<body>
+  <div class="intro">
+    <p>To begin setting up a REST service, you can add a domain model (the resource of the endpoint) and a controller.</p>
+    <p>The controller specifies the mappings of different URIs and the type of request being made.</p>
+    <p>The domain model is the resource that the requester is accessing, for instance they would get back a User object when making a GET request for <span class="code">*/api/v1/users</span></p>
+    <p>Return types of mapped methods are automatically used by spring to create JSON responses for <span class="code">@RestController</span> annotated classes.</p>
+  </div>
+  <div class="explorer">
+    <div class="dir-tree">
+      <ul>
+        <li class="dir">
+          <span>demo</span>
+          <ul>
+            <li class="dir"><span>.mvn</span></li>
+            <li class="dir">
+              <span>src</span>
+              <ul>
+                <li class="dir"><span>main</span>
+                  <ul>
+                    <li class="dir">
+                      <span>java</span>
+                      <ul>
+                        <li class="dir">
+                          <span>com.example.demo</span>
+                          <ul>
+                            <li class="dir">
+                              <span>domain</span>
+                              <ul>
+                                <li class="delta-add file">User.java</li>
+                              </ul>
+                            </li>
+                            <li class="dir">
+                              <span>web</span>
+                              <ul>
+                                <li class="delta-add file">UserController.java</li>
+                              </ul>
+                            </li>
+                            <li class="file">DemoApplication.java</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li class="dir">
+                      <span>resources</span>
+                      <ul>
+                        <li class="delta-add file sb">application.yml</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="file">.gitignore</li>
+            <li class="file">mvnw</li>
+            <li class="file">mvnw.cmd</li>
+            <li class="delta-add file">pom.xml</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="display">
+      <div class="file-code" id="user.java">
+        <pre>
+                <code class="java">package com.example.demo.domain;
+
+  <div class="inline delta-add">
+  /*
+   * The business model used for requests/responses via the REST API.
+   * Entities should never be used to receive or send data.
+   */</div>
+  public class User {
+
+      private Long id;
+      private String username;
+      private String password;
+      <span class="inline delta-add" data-toggle="popover" title="Date Format" data-content="A good convention is to keep all dates in EPOCH milliseconds (Long) to avoid timezone and format discrepencies.">private Long joinDate;</span>
+
+      public Long getId() {
+          return id;
+      }
+
+      public void setId(Long id) {
+          this.id = id;
+      }
+
+      //Getters and setters...
+      //Equals and Hash...
+
+  }
+  </code>
+              </pre>
+      </div>
+      <div class="file-code" id="user-controller.java">
+        <pre>
+                  <code class="java">package com.example.demo.controller;
+
+import com.example.demo.domain.User;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+ * Defines endpoints and validations for the associated API Contract for the {@link User} resource.
+ */
+<span class="inline delta-add" data-toggle="popover" title="@RestController annotation" data-content="A @Component based annotation that allows spring to locate and integrate the controller with the http servlet.">@RestController</span>
+<span class="inline delta-add" data-toggle="popover" title="@RequestMapping annotation" data-content="Used to specify the URI, and when used to annotate the class, it specifies the base uri of all subsequent mappings in the class.">@RequestMapping("/api/v1")</span>
+public interface UserController {
+
+    <span class="inline delta-add" data-toggle="popover" title="@GetMapping annotation" data-content="Specify GET request endpoint. Used to update records.">@GetMapping("/users")</span>
+    User getAllUsers();
+
+    <span class="inline delta-add" data-toggle="popover" title="@GetMapping annotation" data-content="Specify another GET request endpoint, but this one includes syntax to denote a path variable, which is encased in {} brackets.">@GetMapping("/users/{id}")</span>
+    <span class="inline delta-add" data-toggle="popover" title="Return Type" data-content="Spring will automatically convert return objects into JSON strings and set the content-type header.">List&lt;User&gt;</span> getUserById(<span class="inline delta-add" data-toggle="popover" title="@PathVariable annotation" data-content="Designates that the ensuing variable is pulled as a path variable.  The name of the variable must match the url variable enclosed in {} brackets">@PathVariable</span> Long id);
+
+    <span class="inline delta-add" data-toggle="popover" title="@PostMapping annotation" data-content="Specify POST request endpoint. Used to create records.">@PostMapping("/users")</span>
+    List&lt;User&gt; createUsers(<span class="inline delta-add" data-toggle="popover" title="@RequestBody annotation" data-content="Tells spring to try and convert the body of the request to the type of the ensuing parameter and load it in the parameter.">@RequestBody</span> List&lt;User&gt; users);
+
+    <span class="inline delta-add" data-toggle="popover" title="@PutMapping annotation" data-content="Specify PUT request endpoint. Used to update records.">@PutMapping("/users")</span>
+    List&lt;User&gt; updateUsers(@RequestBody List&lt;User&gt; users);
+
+    <span class="inline delta-add" data-toggle="popover" title="@DeleteMapping annotation" data-content="Specify a DELETE request endpoint. Used to delete records.">@DeleteMapping("/users")</span>
+    List&lt;User&gt; deleteUsers(@RequestBody List&lt;User&gt; users);
+}
+
+  </code>
+                </pre>
+      </div>
+      <div class="file-code" id="application.yml">
+        <pre>
+                <code class="yaml">
+spring:
+  profiles:
+    active: dev
+<div class="inline delta-add" data-toggle="popover" title="Property: server.port" data-content="Sets the http servlet port, 8080 is the default value when not specified.">server:
+  port: 8080
+</div>
+</code>
+              </pre>
+      </div>
+      <div class="file-code" id="pom.xml">
+        <pre>
+                <code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;parent&gt;
+		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+		&lt;version&gt;2.2.1.RELEASE&lt;/version&gt;
+		&lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+	&lt;/parent&gt;
+	&lt;groupId&gt;com.example&lt;/groupId&gt;
+	&lt;artifactId&gt;demo&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;name&gt;demo&lt;/name&gt;
+	&lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
+
+	&lt;properties&gt;
+		&lt;java.version&gt;1.8&lt;/java.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+  <div class="inline delta-remove" data-toggle="popover" title="SpringBoot Starter" data-content="The other starters bring in spring-boot-starter, so this is not needed now.">
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;
+		&lt;/dependency&gt;
+  </div>
+  <div class="inline delta-add" data-toggle="popover" title="SpringBoot Starter Web" data-content="A group of dependencies for creating a SpringBoot application that serves Http requests.">
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+		&lt;/dependency&gt;
+  </div>
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+			&lt;exclusions&gt;
+				&lt;exclusion&gt;
+					&lt;groupId&gt;org.junit.vintage&lt;/groupId&gt;
+					&lt;artifactId&gt;junit-vintage-engine&lt;/artifactId&gt;
+				&lt;/exclusion&gt;
+			&lt;/exclusions&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+				&lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+
+&lt;/project&gt;</code>
+              </pre>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
